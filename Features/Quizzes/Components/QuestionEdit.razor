@@ -1,0 +1,84 @@
+﻿@using Quiz.Features.Quizzes.Helpers
+
+<div class="question-block" tabindex="0">
+    <div class="select-container">
+        <input class="question-name" @bind="Question.Name" placeholder="Question name" />
+
+        <select @bind="Question.Type" class="select-type">
+            @foreach (var type in Enum.GetValues<QuestionType>())
+            {
+                <option value="@type" class="select-option">@type.GetDisplayName()</option>
+            }
+        </select>
+    </div>
+
+    @switch (Question.Type)
+    {
+        case QuestionType.MultipleChoice:
+        case QuestionType.Checkboxes:
+            <ul class="@(Question.Type == QuestionType.MultipleChoice ? "multiple-choice-container" : "checkbox-container")">
+                @for (int i = 0; i < Question.Options.Count; i++)
+                {
+                    var index = i;
+                    var isOtherOption = Question.Options[index] == "Other";
+                    <li>
+
+                        @if (Question.Type == QuestionType.MultipleChoice)
+                        {
+                            <input type="radio" disabled />
+                        }
+                        else
+                        {
+                            <input type="checkbox" disabled />
+                        }
+                        <div class="label-container">
+
+                            @if (isOtherOption)
+                            {
+                                <span class="other-option">Other</span>
+                            }
+                            else
+                            {
+                                <input @bind="Question.Options[index]" placeholder="Variant" class="editable-label" />
+                            }
+                            <button @onclick="() => RemoveOption(index)">X</button>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div class="question-buttons-container">
+                <button class="btn" @onclick="AddOption">+ Add Option</button>
+
+                @if (!Question.HasOtherOption)
+                {
+                    <button class="btn" @onclick="AddOtherOption">+ Add "Other"</button>
+                }
+            </div>
+            break;
+
+        case QuestionType.ShortAnswer:
+            <div class="short-answer-container">
+                <input type="text" disabled placeholder="Question text with short answers" />
+            </div>
+            break;
+
+        case QuestionType.Paragraph:
+            <div class="short-answer-container">
+                <input type="text" disabled placeholder="Question text with long answers" />
+            </div>
+            break;
+    }
+
+    <div class="question-card-footer">
+        <div class="toggle-container">
+            <span>Required</span>
+            <div class="toggle-wrapper">
+                <input type="checkbox" @bind="Question.IsRequired" class="toggle-input" />
+                <span class="toggle-slider"></span>
+            </div>
+        </div>
+
+        <button @onclick="OnRemove" class="btn btn-remove">Remove Question</button>
+    </div>
+</div>
