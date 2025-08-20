@@ -1,0 +1,18 @@
+﻿@page "/"
+@page "/forms"
+@inject NavigationManager Navigation
+@using Quiz.Features.Quizzes.Components
+
+<div class="form-list-container">
+    <h3>New form</h3>
+
+    <button class="btn btn-add-form" @onclick=CreateNewForm>
+        <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="+ image" />
+    </button>
+
+    <ul class="form-card-list-container">
+        <li><FormCard /></li>
+        <li><FormCard /></li>
+        <li><FormCard /></li>
+    </ul>
+</div>

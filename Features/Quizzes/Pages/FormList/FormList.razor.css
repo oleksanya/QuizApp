@@ -1,0 +1,38 @@
+﻿.form-list-container {
+    padding: 2rem;
+}
+
+.form-list-container h3 {
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+
+.form-card-list-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    height: 15.6rem;
+    margin-top: 3rem;
+}
+
+.form-card-list-container li {
+    min-height: 14rem;
+}
+
+.btn-add-form {
+    height: 9rem;
+    width: 12rem;
+    background: var(--white-color);
+    display: block;
+    border-radius: 0.4rem;
+    border: 1px solid var(--light-grey-color)
+}
+
+.btn-add-form img {
+    height: 100%;
+    width: 100%
+}
+
+.btn-add-form:hover {
+    border: 1px solid var(--purple-color)
+}
