@@ -1,0 +1,8 @@
+﻿.formCard-container {
+    background-color: var(--light-grey-color);
+}
+
+.formCard-container {
+    width: 100%;
+    height: 100%;
+}
