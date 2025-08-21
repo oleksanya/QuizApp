@@ -19,7 +19,7 @@
     min-height: 14rem;
 }
 
-.btn-add-form {
+.link-add-form {
     height: 9rem;
     width: 12rem;
     background: var(--white-color);
@@ -28,12 +28,12 @@
     border: 1px solid var(--light-grey-color)
 }
 
-.btn-add-form img {
+.link-add-form img {
     height: 100%;
     width: 100%;
     border-radius: 0.4rem;
 }
 
-.btn-add-form:hover {
+.link-add-form:hover {
     border: 1px solid var(--purple-color)
 }
