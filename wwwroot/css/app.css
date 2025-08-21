@@ -1,13 +1,26 @@
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+@font-face {
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
 }
 
-.invalid {
-    outline: 1px solid red;
+:root {
+    --light-grey-color: #dadce0;
+    --grey-color: #f8f9fa;
+    --grey2-color: #f1f3f4;
+    --grey3-color: #80868b;
+    --purple-color: #7323c4;
+    --white-color: #ffffff;
+    --transperent-purple: #541dc647;
+    --light-purple-color: #f0ebf8;
+    --dark-purple-color: #673ab7;
+    --blue-color: #84acef;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --black: #000000;
 }
 
-.validation-message {
-    color: red;
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
 }
 
 #blazor-error-ui {
@@ -49,19 +62,19 @@
     margin: 20vh auto 1rem auto;
 }
 
-    .loading-progress circle {
-        fill: none;
-        stroke: #e0e0e0;
-        stroke-width: 0.6rem;
-        transform-origin: 50% 50%;
-        transform: rotate(-90deg);
-    }
+.loading-progress circle {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 0.6rem;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+}
 
-        .loading-progress circle:last-child {
-            stroke: #1b6ec2;
-            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
-        }
+.loading-progress circle:last-child {
+    stroke: #1b6ec2;
+    stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+    transition: stroke-dasharray 0.05s ease-in-out;
+}
 
 .loading-progress-text {
     position: absolute;
@@ -70,19 +83,6 @@
     inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
 }
 
-    .loading-progress-text:after {
+ .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
-    }
-
-code {
-    color: #c02d76;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-    color: var(--bs-secondary-color);
-    text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-    text-align: start;
 }

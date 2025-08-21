@@ -1,0 +1,25 @@
+﻿@page "/create-form"
+@using Quiz.Features.Quizzes.Components
+
+<div class="page-container">
+    <div class="form-container">
+        <div class="form-header" tabindex="0">
+            <input type="text" @bind="formTitle" class="input-text form-title-input" required />
+
+            <input type="text" @bind="formDescription" placeholder="Form description" class="input-text form-description-input" required />
+        </div>
+
+        <div class="form-questions">
+            @foreach (var q in form.Questions)
+            {
+                <QuestionEdit Question="q" OnRemove="() => RemoveQuestion(q)" />
+            }
+        </div>
+
+        <div class="form-buttons-panel">
+            <button class="btn-panel" @onclick="AddQuestion">+</button>
+
+            <button class="btn-save" @onclick="SaveForm">Save form</button>
+        </div>
+    </div>
+</div>
