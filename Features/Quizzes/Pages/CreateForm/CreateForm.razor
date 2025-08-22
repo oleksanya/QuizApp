@@ -3,6 +3,14 @@
 
 <div class="page-container">
     <div class="form-container">
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert @(isError ? "alert-error" : "alert-success")">
+                @message
+            </div>
+        }
+
         <div class="form-header" tabindex="0">
             <input type="text" @bind="formTitle" class="input-text form-title-input" required />
 
@@ -17,9 +25,18 @@
         </div>
 
         <div class="form-buttons-panel">
-            <button class="btn-panel" @onclick="AddQuestion">+</button>
+            <button class="btn-panel" @onclick="AddQuestion" disabled="@isLoading">+</button>
 
-            <button class="btn-save" @onclick="SaveForm">Save form</button>
+            <button class="btn-save" @onclick="SaveForm" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Save form</span>
+                }
+            </button>
         </div>
     </div>
 </div>
