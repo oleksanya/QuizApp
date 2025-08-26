@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Quiz.Features.Quizzes.Models;
+using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Components
 {

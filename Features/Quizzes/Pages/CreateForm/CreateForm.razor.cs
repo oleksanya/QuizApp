@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Text.Json;
 using Quiz.Features.Quizzes.Helpers;
-using Quiz.Features.Quizzes.Models;
 using Quiz.Features.Quizzes.Services;
+using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Pages.CreateForm
 {
     public partial class CreateForm : ComponentBase
     {
-        [Inject] private FormService FormService { get; set; } = default!;
+        [Inject] private QuizService QuizService { get; set; } = default!;
 
-        protected string formTitle = "Untitled Form";
-        protected string formDescription = "Form description goes here";
         protected FormModel form = new();
         protected bool isLoading = false;
         protected string message = string.Empty;
@@ -50,11 +47,6 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
 
             try
             {
-
-                form.Title = formTitle;
-                form.Description = formDescription;
-
-
                 var createFormDto = new CreateFormDto
                 {
                     FormInfo = new FormInfoDto
@@ -86,7 +78,7 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
                 };
 
 
-                var result = await FormService.SaveFormAsync(createFormDto);
+                var result = await QuizService.SaveFormAsync(createFormDto);
 
                 if (result?.Success == true)
                 {

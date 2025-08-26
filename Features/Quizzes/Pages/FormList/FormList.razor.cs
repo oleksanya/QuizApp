@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Quiz.Features.Quizzes.Models;
 using Quiz.Features.Quizzes.Services;
+using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Pages.FormList
 {
     public partial class FormList
     {
-        [Inject] private FormService FormService { get; set; } = default!;
+        [Inject] private QuizService QuizService { get; set; } = default!;
 
         private List<CreateFormDto>? forms;
         private bool isLoading = true;
@@ -24,7 +24,7 @@ namespace Quiz.Features.Quizzes.Pages.FormList
                 isLoading = true;
                 errorMessage = null;
 
-                var result = await FormService.GetFormsAsync();
+                var result = await QuizService.GetFormsAsync();
 
                 if (result?.Success == true && result.Data != null)
                 {

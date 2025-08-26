@@ -12,9 +12,9 @@
         }
 
         <div class="form-header" tabindex="0">
-            <input type="text" @bind="formTitle" class="input-text form-title-input" required />
+            <input type="text" @bind="form.Title" class="input-text form-title-input" required />
 
-            <input type="text" @bind="formDescription" placeholder="Form description" class="input-text form-description-input" required />
+            <input type="text" @bind="form.Description" placeholder="Form description" class="input-text form-description-input" required />
         </div>
 
         <div class="form-questions">
@@ -28,14 +28,7 @@
             <button class="btn-panel" @onclick="AddQuestion" disabled="@isLoading">+</button>
 
             <button class="btn-save" @onclick="SaveForm" disabled="@isLoading">
-                @if (isLoading)
-                {
-                    <span>Saving...</span>
-                }
-                else
-                {
-                    <span>Save form</span>
-                }
+                <span>@(isLoading ? "Saving..." : "Save form")</span>
             </button>
         </div>
     </div>
