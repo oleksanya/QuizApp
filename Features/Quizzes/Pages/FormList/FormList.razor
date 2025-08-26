@@ -9,9 +9,30 @@
         <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="+ image" />
     </a>
 
-    <ul class="form-card-list-container">
-        <li><FormCard /></li>
-        <li><FormCard /></li>
-        <li><FormCard /></li>
-    </ul>
+    @if (isLoading)
+    {
+        <div class="loading">Loading forms...</div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="error">@errorMessage</div>
+    }
+    else
+    {
+        <ul class="form-card-list-container">
+            @if (forms != null && forms.Any())
+            {
+                @foreach (var form in forms)
+                {
+                    <li>
+                        <FormCard Form="@form" />
+                    </li>
+                }
+            }
+            else
+            {
+                <li>No forms available</li>
+            }
+        </ul>
+    }
 </div>

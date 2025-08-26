@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Text.Json;
 using Quiz.Features.Quizzes.Helpers;
-using Quiz.Features.Quizzes.Models;
+using Quiz.Features.Quizzes.Services;
+using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Pages.CreateForm
 {
     public partial class CreateForm : ComponentBase
     {
-        protected string formTitle = "Untitled Form";
-        protected string formDescription = "Form description goes here";
+        [Inject] private QuizService QuizService { get; set; } = default!;
+
         protected FormModel form = new();
+        protected bool isLoading = false;
+        protected string message = string.Empty;
+        protected bool isError = false;
 
         protected override void OnInitialized()
         {
@@ -36,58 +39,68 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
             }
         }
 
-        public void SaveForm()
+        public async Task SaveForm()
         {
-            form.Title = formTitle;
-            form.Description = formDescription;
+            isLoading = true;
+            message = string.Empty;
+            isError = false;
 
-            var formInfo = new FormInfo
+            try
             {
-                Id = Guid.NewGuid().ToString(),
-                Title = form.Title,
-                Description = form.Description,
-                CreatedDate = DateTime.Now,
-                TotalQuestions = form.Questions.Count
-            };
+                var createFormDto = new CreateFormDto
+                {
+                    FormInfo = new FormInfoDto
+                    {
+                        Title = form.Title,
+                        Description = form.Description ?? string.Empty,
+                        CreatedDate = DateTime.Now,
+                        TotalQuestions = form.Questions.Count
+                    },
+                    Questions = form.Questions.Select(q => new QuestionDto
+                    {
+                        Name = q.Name,
+                        Type = q.Type.ToString(),
+                        TypeDisplayName = q.Type.GetDisplayName(),
+                        IsRequired = q.IsRequired,
+                        Options = (q.Type == QuestionType.MultipleChoice || q.Type == QuestionType.Checkboxes) && q.Options.Any() ? q.Options : null,
+                        HasOtherOption = q.HasOtherOption,
+                        OptionsCount = (q.Type == QuestionType.MultipleChoice || q.Type == QuestionType.Checkboxes) ? q.Options.Count : 0
+                    }).ToList(),
+                    FormSummary = new FormSummaryDto
+                    {
+                        TotalQuestions = form.Questions.Count,
+                        RequiredQuestions = form.Questions.Count(q => q.IsRequired),
+                        MultipleChoiceQuestions = form.Questions.Count(q => q.Type == QuestionType.MultipleChoice),
+                        ShortAnswerQuestions = form.Questions.Count(q => q.Type == QuestionType.ShortAnswer),
+                        ParagraphQuestions = form.Questions.Count(q => q.Type == QuestionType.Paragraph),
+                        CheckboxQuestions = form.Questions.Count(q => q.Type == QuestionType.Checkboxes)
+                    }
+                };
 
-            var questions = form.Questions.Select(q => new QuestionData
+
+                var result = await QuizService.SaveFormAsync(createFormDto);
+
+                if (result?.Success == true)
+                {
+                    message = "Form saved successfully!";
+                    isError = false;
+                }
+                else
+                {
+                    message = result?.Error ?? result?.Message ?? "Failed to save form";
+                    isError = true;
+                }
+            }
+            catch (Exception ex)
             {
-                Name = q.Name,
-                Type = q.Type.ToString(),
-                TypeDisplayName = q.Type.GetDisplayName(),
-                IsRequired = q.IsRequired,
-                Options = (q.Type == QuestionType.MultipleChoice || q.Type == QuestionType.Checkboxes) && q.Options.Any() ? q.Options : null,
-                HasOtherOption = q.HasOtherOption,
-                OptionsCount = (q.Type == QuestionType.MultipleChoice || q.Type == QuestionType.Checkboxes) ? q.Options.Count : 0
-            }).ToList();
-
-            var formSummary = new FormSummary
+                message = $"Unexpected error: {ex.Message}";
+                isError = true;
+            }
+            finally
             {
-                TotalQuestions = form.Questions.Count,
-                RequiredQuestions = form.Questions.Count(q => q.IsRequired),
-                MultipleChoiceQuestions = form.Questions.Count(q => q.Type == QuestionType.MultipleChoice),
-                ShortAnswerQuestions = form.Questions.Count(q => q.Type == QuestionType.ShortAnswer),
-                ParagraphQuestions = form.Questions.Count(q => q.Type == QuestionType.Paragraph),
-                CheckboxQuestions = form.Questions.Count(q => q.Type == QuestionType.Checkboxes)
-            };
-
-            var completeFormData = new CompleteFormData
-            {
-                FormInfo = formInfo,
-                Questions = questions,
-                FormSummary = formSummary
-            };
-
-            var jsonOptions = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
-            var jsonString = JsonSerializer.Serialize(completeFormData, jsonOptions);
-
-            Console.WriteLine("Complete Form Data:");
-            Console.WriteLine(jsonString);
+                isLoading = false;
+                StateHasChanged();
+            }
         }
     }
 }

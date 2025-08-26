@@ -1,3 +1,12 @@
-﻿<div class="formCard-container">
-    <p>Place for form card</p>
+﻿@using Microsoft.AspNetCore.Components
+@using System.Globalization
+@using Quiz.Features.Quizzes.Models
+
+<div class="formCard-container">
+    <div class="formCard-preview-container">Form preview</div>
+
+    <div class="form-info-container">
+        <h3 class="formCard-heading">@Form.FormInfo.Title</h3>
+        <p>Created: @Form.FormInfo.CreatedDate.ToString("dd MMM, yyyy", new CultureInfo("en-US"))</p>
+    </div>
 </div>
