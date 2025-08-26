@@ -1,15 +1,16 @@
-using Quiz.Features.Quizzes.Models;
-using Quiz.Features.Services;
+using Quiz.Common.Models;
+using Quiz.Common.Services;
 using System.Text.Json;
+using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Services
 {
-    public class FormService
+    public class QuizService
     {
         private readonly CustomHttpClient _customHttpClient;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public FormService(CustomHttpClient customHttpClient)
+        public QuizService(CustomHttpClient customHttpClient)
         {
             _customHttpClient = customHttpClient;
             _jsonOptions = new JsonSerializerOptions

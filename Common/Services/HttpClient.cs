@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 
-namespace Quiz.Features.Services
+namespace Quiz.Common.Services
 {
     public class CustomHttpClient
     {
