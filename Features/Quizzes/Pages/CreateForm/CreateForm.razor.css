@@ -112,11 +112,16 @@
 
 .drag-handle {
     cursor: grab;
+    user-select: none;
     position: absolute;
     left: 50%;
     right: 50%;
     display: flex;
     transform: rotate(90deg)
+}
+
+.drag-handle:active {
+    cursor: grabbing;
 }
 
 .draggable-question { 
@@ -129,5 +134,7 @@
 }
 
 .draggable-mirror {
-    z-index: 20; 
+    opacity: 0.8;
+    transform: rotate(5deg);
+    z-index: 10;
 }
