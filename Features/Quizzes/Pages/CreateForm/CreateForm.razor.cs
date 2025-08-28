@@ -12,7 +12,6 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
         [Inject] private IJSRuntime JS { get; set; } = default!;
 
         private DotNetObjectReference<CreateForm>? _dotNetRef;
-
         protected FormModel form = new();
         protected bool isLoading = false;
         protected string message = string.Empty;
@@ -89,6 +88,8 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
             {
                 await SyncPositionsWithDOM();
 
+          
+
                 var createFormDto = new CreateFormDto
                 {
                     FormInfo = new FormInfoDto
@@ -107,7 +108,8 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
                         Options = (q.Type == QuestionType.MultipleChoice || q.Type == QuestionType.Checkboxes) && q.Options.Any() ? q.Options : null,
                         HasOtherOption = q.HasOtherOption,
                         OptionsCount = (q.Type == QuestionType.MultipleChoice || q.Type == QuestionType.Checkboxes) ? q.Options.Count : 0,
-                        Position = q.Position
+                        Position = q.Position,
+                        Id = q.Id.ToString()
                     }).ToList(),
                     FormSummary = new FormSummaryDto
                     {
@@ -119,7 +121,7 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
                         CheckboxQuestions = form.Questions.Count(q => q.Type == QuestionType.Checkboxes)
                     }
                 };
-
+      
                 var result = await QuizService.SaveFormAsync(createFormDto);
 
                 if (result?.Success == true)
