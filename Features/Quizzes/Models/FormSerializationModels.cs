@@ -17,7 +17,8 @@ namespace Quiz.Features.Quizzes.Models
         public string Type { get; set; } = string.Empty;
         public string TypeDisplayName { get; set; } = string.Empty;
         public bool IsRequired { get; set; }
-        
+        public int Position { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<string>? Options { get; set; }
         
