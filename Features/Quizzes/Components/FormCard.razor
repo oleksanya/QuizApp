@@ -9,4 +9,24 @@
         <h3 class="formCard-heading">@Form.FormInfo.Title</h3>
         <p>Created: @Form.FormInfo.CreatedDate.ToString("dd MMM, yyyy", new CultureInfo("en-US"))</p>
     </div>
+
+    <div class="context-menu-container">
+        <button class="context-menu-button" @onclick="ToggleContextMenu" @onclick:stopPropagation="true">
+            ⋮
+        </button>
+        
+        @if (showContextMenu)
+        {
+            <div class="context-menu" @onclick:stopPropagation="true">
+                <div class="context-menu-item" @onclick="CopyQuizLinkToClipboard">
+                    Copy quiz link to clipboard
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+@if (showContextMenu)
+{
+    <div class="context-menu-overlay" @onclick="CloseContextMenu"></div>
+}

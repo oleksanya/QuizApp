@@ -12,6 +12,8 @@ namespace Quiz.Features.Quizzes.Models
 
         public class CreateFormDto
         {
+            [JsonPropertyName("_id")]
+            public string? Id { get; set; }
 
             [JsonPropertyName("formInfo")]
             public FormInfoDto FormInfo { get; set; } = new();

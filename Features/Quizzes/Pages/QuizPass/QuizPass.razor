@@ -1,0 +1,24 @@
+@page "/quiz-pass/{FormId}"
+@using Quiz.Features.Quizzes.Models
+
+<div class="quiz-pass-container">
+    <div class="quiz-pass-content">
+        @if (isLoading)
+        {
+            <div class="loading-container">
+                Loading quiz...
+            </div>
+        }
+        else
+        {
+            <div class="placeholder-content">
+                <h2>Quiz Page</h2>
+
+                <p>This page will display the quiz form for users to fill out.</p>
+
+                <p>Form ID:@FormId</p>
+                <p>Form Name: @FormName</p>
+            </div>
+        }
+    </div>
+</div>
