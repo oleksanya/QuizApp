@@ -30,7 +30,6 @@ namespace Quiz.Features.Quizzes.Models
 
         public class FormInfoDto
         {
-
             [JsonPropertyName("title")]
             public string Title { get; set; } = string.Empty;
 
@@ -46,6 +45,9 @@ namespace Quiz.Features.Quizzes.Models
 
         public class QuestionDto
         {
+            [JsonPropertyName("id")]
+            public string Id { get; set; } = string.Empty;
+
             [JsonPropertyName("name")]
             public string Name { get; set; } = string.Empty;
 
