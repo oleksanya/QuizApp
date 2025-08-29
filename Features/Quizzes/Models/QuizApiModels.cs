@@ -12,8 +12,6 @@ namespace Quiz.Features.Quizzes.Models
 
         public class CreateFormDto
         {
-            [JsonPropertyName("_id")]
-            public string? DatabaseId { get; set; }
 
             [JsonPropertyName("formInfo")]
             public FormInfoDto FormInfo { get; set; } = new();
@@ -30,9 +28,6 @@ namespace Quiz.Features.Quizzes.Models
 
         public class FormInfoDto
         {
-            [JsonPropertyName("_id")]
-            public string? DatabaseId { get; set; }
-
             [JsonPropertyName("title")]
             public string Title { get; set; } = string.Empty;
 
@@ -48,8 +43,8 @@ namespace Quiz.Features.Quizzes.Models
 
         public class QuestionDto
         {
-            [JsonPropertyName("_id")]
-            public string? DatabaseId { get; set; }
+            [JsonPropertyName("id")]
+            public string Id { get; set; } = string.Empty;
 
             [JsonPropertyName("name")]
             public string Name { get; set; } = string.Empty;
@@ -71,12 +66,13 @@ namespace Quiz.Features.Quizzes.Models
 
             [JsonPropertyName("optionsCount")]
             public int OptionsCount { get; set; } = 0;
+
+            [JsonPropertyName("position")]
+            public int Position { get; set; } = 0;
         }
 
         public class FormSummaryDto
         {
-            [JsonPropertyName("_id")]
-            public string? DatabaseId { get; set; }
 
             [JsonPropertyName("totalQuestions")]
             public int TotalQuestions { get; set; }

@@ -109,3 +109,32 @@
     color: var(--alert-error-color);
     border: 1px solid var(--alert-error-border);
 }
+
+.drag-handle {
+    cursor: grab;
+    user-select: none;
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    display: flex;
+    transform: rotate(90deg)
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.draggable-question { 
+    position: relative;
+    margin-bottom: 1rem; 
+}
+
+.draggable-source--is-dragging {
+    opacity: 0.5;
+}
+
+.draggable-mirror {
+    opacity: 0.8;
+    transform: rotate(5deg);
+    z-index: 10;
+}

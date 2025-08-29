@@ -17,10 +17,17 @@
             <input type="text" @bind="form.Description" placeholder="Form description" class="input-text form-description-input" required />
         </div>
 
-        <div class="form-questions">
+        <div class="form-questions" id="questions-list">
             @foreach (var q in form.Questions)
             {
-                <QuestionEdit Question="q" OnRemove="() => RemoveQuestion(q)" />
+                <div class="draggable-question" data-id="@q.Id">
+                    <div class="drag-handle" title="Drag to reorder">
+                        <span class="dots">⋮⋮</span>
+                    </div>
+                    <div class="question-wrapper">
+                        <QuestionEdit Question="q" OnRemove="() => RemoveQuestion(q)" />
+                    </div>
+                </div>
             }
         </div>
 
