@@ -15,13 +15,11 @@ namespace Quiz.Features.Quizzes.Components
         private void ToggleContextMenu()
         {
             showContextMenu = !showContextMenu;
-            StateHasChanged();
         }
 
         private void CloseContextMenu()
         {
             showContextMenu = false;
-            StateHasChanged();
         }
 
         private async Task CopyQuizLinkToClipboard()
@@ -38,10 +36,8 @@ namespace Quiz.Features.Quizzes.Components
                 }
 
                 await JS.InvokeVoidAsync("copyToClipboard", quizLink);
-                
-                CloseContextMenu();
             }
-            catch
+            finally
             {
                 CloseContextMenu();
             }
