@@ -32,7 +32,7 @@ namespace Quiz.Features.Quizzes.Helpers
 
         private static bool ValidateMultipleChoiceAnswer(QuestionDto question, QuizAnswerManager answerManager)
         {
-            var answer = answerManager.GetRadioAnswer(question.Id);
+            var answer = answerManager.GetTextAnswer(question.Id);
             if (string.IsNullOrEmpty(answer)) return false;
             
             if (answer == "Other" && question.HasOtherOption)

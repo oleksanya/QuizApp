@@ -15,16 +15,6 @@ namespace Quiz.Features.Quizzes.Pages.QuizPass
         private readonly QuizAnswerManager _answerManager = new();
         private QuizFormHelper? _formHelper;
 
-
-        private bool isLoading => _state.IsLoading;
-        private bool isSubmitting => _state.IsSubmitting;
-        private bool isSubmitted => _state.IsSubmitted;
-        private string errorMessage => _state.ErrorMessage;
-        private string submitMessage => _state.SubmitMessage;
-        private bool submitError => _state.SubmitError;
-        private string FormName => _state.FormName;
-        private CreateFormDto? quizForm => _state.QuizForm;
-
         protected override async Task OnInitializedAsync()
         {
             _formHelper = new QuizFormHelper(QuizService!);
@@ -66,32 +56,5 @@ namespace Quiz.Features.Quizzes.Pages.QuizPass
             _state.SubmitMessage = string.Empty;
             _state.SubmitError = false;
         }
-
-        private void UpdateTextAnswer(string questionId, string value) =>
-            _answerManager.UpdateTextAnswer(questionId, value);
-
-        private void UpdateRadioAnswer(string questionId, string value) =>
-            _answerManager.UpdateRadioAnswer(questionId, value);
-
-        private void UpdateCheckboxAnswer(string questionId, string option, bool isChecked) =>
-            _answerManager.UpdateCheckboxAnswer(questionId, option, isChecked);
-
-        private void UpdateCustomOtherAnswer(string questionId, string value) =>
-            _answerManager.UpdateCustomOtherAnswer(questionId, value);
-
-        private string GetTextAnswer(string questionId) =>
-            _answerManager.GetTextAnswer(questionId);
-
-        private string GetRadioAnswer(string questionId) =>
-            _answerManager.GetRadioAnswer(questionId);
-
-        private bool IsCheckboxSelected(string questionId, string option) =>
-            _answerManager.IsCheckboxSelected(questionId, option);
-
-        private string GetCustomOtherAnswer(string questionId) =>
-            _answerManager.GetCustomOtherAnswer(questionId);
-
-        private bool IsOtherSelected(string questionId, string questionType) =>
-            _answerManager.IsOtherSelected(questionId, questionType);
     }
 }

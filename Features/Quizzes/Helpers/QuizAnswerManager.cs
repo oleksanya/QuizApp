@@ -76,11 +76,6 @@ namespace Quiz.Features.Quizzes.Helpers
             return _userAnswers.TryGetValue(questionId, out var answer) ? answer?.ToString() ?? string.Empty : string.Empty;
         }
 
-        public string GetRadioAnswer(string questionId)
-        {
-            return _userAnswers.TryGetValue(questionId, out var answer) ? answer?.ToString() ?? string.Empty : string.Empty;
-        }
-
         public bool IsCheckboxSelected(string questionId, string option)
         {
             return _userAnswers.TryGetValue(questionId, out var answer) && 
@@ -97,7 +92,7 @@ namespace Quiz.Features.Quizzes.Helpers
         {
             return questionType switch
             {
-                "MultipleChoice" => GetRadioAnswer(questionId) == "Other",
+                "MultipleChoice" => GetTextAnswer(questionId) == "Other",
                 "Checkboxes" => IsCheckboxSelected(questionId, "Other"),
                 _ => false
             };

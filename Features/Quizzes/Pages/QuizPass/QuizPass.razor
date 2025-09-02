@@ -3,26 +3,26 @@
 
 <div class="quiz-pass-container">
     <div class="quiz-pass-content">
-        @if (isLoading)
+        @if (_state.IsLoading)
         {
             <div class="loading-container">
                 <div class="loading-spinner"></div>
                 <p>Loading quiz...</p>
             </div>
         }
-        else if (!string.IsNullOrEmpty(errorMessage))
+        else if (!string.IsNullOrEmpty(_state.ErrorMessage))
         {
             <div class="error-container">
                 <div class="alert alert-error">
                     <h3>Error</h3>
-                    <p>@errorMessage</p>
+                    <p>@_state.ErrorMessage</p>
                 </div>
                 <button class="btn btn-primary" @onclick="LoadQuiz">Try Again</button>
             </div>
         }
-        else if (quizForm != null)
+        else if (_state.QuizForm != null)
         {
-            @if (isSubmitted)
+            @if (_state.IsSubmitted)
             {
                 <div class="success-container">
                     <div class="alert alert-success">
@@ -33,15 +33,15 @@
             else
             {
                 <div class="quiz-header">
-                    <h1>@quizForm.FormInfo?.Title</h1>
-                    @if (!string.IsNullOrEmpty(quizForm.FormInfo?.Description))
+                    <h1>@_state.QuizForm.FormInfo?.Title</h1>
+                    @if (!string.IsNullOrEmpty(_state.QuizForm.FormInfo?.Description))
                     {
-                        <p class="quiz-description">@quizForm.FormInfo.Description</p>
+                        <p class="quiz-description">@_state.QuizForm.FormInfo.Description</p>
                     }
                     <div class="quiz-info">
-                        <span class="question-count">@quizForm.Questions.Count question(s)</span>
+                        <span class="question-count">@_state.QuizForm.Questions.Count question(s)</span>
                         @{
-                            var requiredCount = quizForm.Questions.Count(q => q.IsRequired);
+                            var requiredCount = _state.QuizForm.Questions.Count(q => q.IsRequired);
                         }
                         @if (requiredCount > 0)
                         {
@@ -50,15 +50,15 @@
                     </div>
                 </div>
 
-                @if (!string.IsNullOrEmpty(submitMessage))
+                @if (!string.IsNullOrEmpty(_state.SubmitMessage))
                 {
-                    <div class="alert @(submitError ? "alert-error" : "alert-success")">
-                        @submitMessage
+                    <div class="alert @(_state.SubmitError ? "alert-error" : "alert-success")">
+                        @_state.SubmitMessage
                     </div>
                 }
 
                 <form class="quiz-form" @onsubmit="SubmitQuiz" @onsubmit:preventDefault="true">
-                    @foreach (var question in quizForm.Questions.OrderBy(q => q.Position))
+                    @foreach (var question in _state.QuizForm.Questions.OrderBy(q => q.Position))
                     {
                         <div class="question-container">
                             <div class="question-header">
@@ -79,16 +79,16 @@
                                     case "ShortAnswer":
                                         <input type="text" 
                                                class="form-input"
-                                               value="@GetTextAnswer(question.Id)" 
-                                               @onchange="@((e) => UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                               value="@_answerManager.GetTextAnswer(question.Id)" 
+                                               @onchange="@((e) => _answerManager.UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
                                                placeholder="Your answer..." />
                                         break;
 
                                     case "Paragraph":
                                         <textarea class="form-textarea"
                                                   rows="4"
-                                                  value="@GetTextAnswer(question.Id)"
-                                                  @onchange="@((e) => UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                                  value="@_answerManager.GetTextAnswer(question.Id)"
+                                                  @onchange="@((e) => _answerManager.UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
                                                   placeholder="Your detailed answer..."></textarea>
                                         break;
 
@@ -103,8 +103,8 @@
                                                             <input type="radio" 
                                                                    name="question_@question.Id" 
                                                                    value="@option"
-                                                                   checked="@(GetRadioAnswer(question.Id) == option)"
-                                                                   @onchange="@(() => UpdateRadioAnswer(question.Id, option))" />
+                                                                   checked="@(_answerManager.GetTextAnswer(question.Id) == option)"
+                                                                   @onchange="@(() => _answerManager.UpdateRadioAnswer(question.Id, option))" />
                                                             <span class="radio-text">
                                                                 @if (option == "Other" && question.HasOtherOption)
                                                                 {
@@ -117,12 +117,12 @@
                                                             </span>
                                                         </label>
                                                         
-                                                        @if (option == "Other" && question.HasOtherOption && IsOtherSelected(question.Id, "MultipleChoice"))
+                                                        @if (option == "Other" && question.HasOtherOption && _answerManager.IsOtherSelected(question.Id, "MultipleChoice"))
                                                         {
                                                             <input type="text"
                                                                    class="other-input"
-                                                                   value="@GetCustomOtherAnswer(question.Id)"
-                                                                   @onchange="@((e) => UpdateCustomOtherAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                                                   value="@_answerManager.GetCustomOtherAnswer(question.Id)"
+                                                                   @onchange="@((e) => _answerManager.UpdateCustomOtherAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
                                                                    placeholder="Custom option" />
                                                         }
                                                     </div>
@@ -140,8 +140,8 @@
                                                     <div class="checkbox-option-container">
                                                         <label class="checkbox-option">
                                                             <input type="checkbox" 
-                                                                   checked="@IsCheckboxSelected(question.Id, option)"
-                                                                   @onchange="@((e) => UpdateCheckboxAnswer(question.Id, option, (bool)(e.Value ?? false)))" />
+                                                                   checked="@_answerManager.IsCheckboxSelected(question.Id, option)"
+                                                                   @onchange="@((e) => _answerManager.UpdateCheckboxAnswer(question.Id, option, (bool)(e.Value ?? false)))" />
                                                             <span class="checkbox-text">
                                                                 @if (option == "Other" && question.HasOtherOption)
                                                                 {
@@ -154,12 +154,12 @@
                                                             </span>
                                                         </label>
                                                         
-                                                        @if (option == "Other" && question.HasOtherOption && IsCheckboxSelected(question.Id, option))
+                                                        @if (option == "Other" && question.HasOtherOption && _answerManager.IsCheckboxSelected(question.Id, option))
                                                         {
                                                             <input type="text"
                                                                    class="other-input"
-                                                                   value="@GetCustomOtherAnswer(question.Id)"
-                                                                   @onchange="@((e) => UpdateCustomOtherAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                                                   value="@_answerManager.GetCustomOtherAnswer(question.Id)"
+                                                                   @onchange="@((e) => _answerManager.UpdateCustomOtherAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
                                                                    placeholder="Custom option" />
                                                         }
                                                     </div>
@@ -179,8 +179,8 @@
                     <div class="form-actions">
                         <button type="submit" 
                                 class="btn btn-primary btn-submit" 
-                                disabled="@isSubmitting">
-                            @if (isSubmitting)
+                                disabled="@_state.IsSubmitting">
+                            @if (_state.IsSubmitting)
                             {
                                 <span class="loading-text">
                                     Submitting...
