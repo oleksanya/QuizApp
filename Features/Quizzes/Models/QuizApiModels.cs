@@ -94,5 +94,26 @@ namespace Quiz.Features.Quizzes.Models
             [JsonPropertyName("checkboxQuestions")]
             public int CheckboxQuestions { get; set; }
         }
+
+        public class FormResponseSubmissionDto
+        {
+            [JsonPropertyName("formId")]
+            public string FormId { get; set; } = string.Empty;
+
+            [JsonPropertyName("answers")]
+            public Dictionary<string, object?> Answers { get; set; } = new();
+        }
+
+        public class FormResponseSubmissionResponseDto
+        {
+            [JsonPropertyName("responseId")]
+            public string? ResponseId { get; set; }
+
+            [JsonPropertyName("formId")]
+            public string FormId { get; set; } = string.Empty;
+
+            [JsonPropertyName("submittedAt")]
+            public DateTime SubmittedAt { get; set; }
+        }
     }
 }
