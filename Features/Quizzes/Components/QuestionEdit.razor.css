@@ -3,7 +3,8 @@
     padding: 2rem 2rem 0;
     margin-bottom: 1rem;
     border-radius: 0.4rem;
-    background: white;
+    background-color: var(--white-color);
+    box-shadow: var(--shadow);
     border-left: 0.4rem solid transparent;
 }
 
