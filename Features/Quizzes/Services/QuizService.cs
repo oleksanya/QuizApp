@@ -1,5 +1,6 @@
 using Quiz.Common.Models;
 using Quiz.Common.Services;
+using Quiz.Features.Quizzes.Models;
 using System.Text.Json;
 using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
@@ -105,7 +106,7 @@ namespace Quiz.Features.Quizzes.Services
             try
             {
                 var json = JsonSerializer.Serialize(formDto, _jsonOptions);
-                var response = await _customHttpClient.SendRequestAsync($"/forms/{id}", HttpMethod.Put, json);
+                var response = await _customHttpClient.SendRequestAsync($"/forms/{id}", HttpMethod.Patch, json);
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<ApiResponse<CreateFormDto>>(responseContent, _jsonOptions);
@@ -174,6 +175,25 @@ namespace Quiz.Features.Quizzes.Services
                 {
                     Success = false,
                     Message = "Unexpected error occurred during submission",
+                    Error = ex.Message
+                };
+            }
+        }
+
+        public async Task<ApiResponse<FormStatisticsDto>?> GetFormStatisticsAsync(string formId)
+        {
+            try
+            {
+                var response = await _customHttpClient.SendRequestAsync($"/form-responses/form/{formId}/statistics", HttpMethod.Get);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<ApiResponse<FormStatisticsDto>>(responseContent, _jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<FormStatisticsDto>
+                {
+                    Success = false,
+                    Message = "Failed to retrieve form statistics",
                     Error = ex.Message
                 };
             }
