@@ -3,22 +3,199 @@
 
 <div class="quiz-pass-container">
     <div class="quiz-pass-content">
-        @if (isLoading)
+        @if (_state.IsLoading)
         {
             <div class="loading-container">
-                Loading quiz...
+                <div class="loading-spinner"></div>
+                <p>Loading quiz...</p>
             </div>
         }
-        else
+        else if (!string.IsNullOrEmpty(_state.ErrorMessage))
         {
-            <div class="placeholder-content">
-                <h2>Quiz Page</h2>
-
-                <p>This page will display the quiz form for users to fill out.</p>
-
-                <p>Form ID:@FormId</p>
-                <p>Form Name: @FormName</p>
+            <div class="error-container">
+                <div class="alert alert-error">
+                    <h3>Error</h3>
+                    <p>@_state.ErrorMessage</p>
+                </div>
+                <button class="btn btn-primary" @onclick="LoadQuiz">Try Again</button>
             </div>
+        }
+        else if (_state.QuizForm != null)
+        {
+            @if (_state.IsSubmitted)
+            {
+                <div class="success-container">
+                    <div class="alert alert-success">
+                        <p>Your quiz response has been successfully submitted.</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="quiz-header">
+                    <h1>@_state.QuizForm.FormInfo?.Title</h1>
+                    @if (!string.IsNullOrEmpty(_state.QuizForm.FormInfo?.Description))
+                    {
+                        <p class="quiz-description">@_state.QuizForm.FormInfo.Description</p>
+                    }
+                    <div class="quiz-info">
+                        <span class="question-count">@_state.QuizForm.Questions.Count question(s)</span>
+                        @{
+                            var requiredCount = _state.QuizForm.Questions.Count(q => q.IsRequired);
+                        }
+                        @if (requiredCount > 0)
+                        {
+                            <span class="required-info">@requiredCount required</span>
+                        }
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(_state.SubmitMessage))
+                {
+                    <div class="alert @(_state.SubmitError ? "alert-error" : "alert-success")">
+                        @_state.SubmitMessage
+                    </div>
+                }
+
+                <form class="quiz-form" @onsubmit="SubmitQuiz" @onsubmit:preventDefault="true">
+                    @foreach (var question in _state.QuizForm.Questions.OrderBy(q => q.Position))
+                    {
+                        <div class="question-container">
+                            <div class="question-header">
+                                <h3 class="question-title">
+                                    @question.Name
+
+                                    @if (question.IsRequired)
+                                    {
+                                        <span class="required-indicator">*</span>
+                                    }
+                                </h3>
+                                <span class="question-type">@question.TypeDisplayName</span>
+                            </div>
+
+                            <div class="question-content">
+                                @switch (question.Type)
+                                {
+                                    case "ShortAnswer":
+                                        <input type="text" 
+                                               class="form-input"
+                                               value="@_answerManager.GetTextAnswer(question.Id)" 
+                                               @onchange="@((e) => _answerManager.UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                               placeholder="Your answer..." />
+                                        break;
+
+                                    case "Paragraph":
+                                        <textarea class="form-textarea"
+                                                  rows="4"
+                                                  value="@_answerManager.GetTextAnswer(question.Id)"
+                                                  @onchange="@((e) => _answerManager.UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                                  placeholder="Your detailed answer..."></textarea>
+                                        break;
+
+                                    case "MultipleChoice":
+                                        @if (question.Options?.Any() == true)
+                                        {
+                                            <div class="radio-group">
+                                                @foreach (var option in question.Options)
+                                                {
+                                                    <div class="radio-option-container">
+                                                        <label class="radio-option">
+                                                            <input type="radio" 
+                                                                   name="question_@question.Id" 
+                                                                   value="@option"
+                                                                   checked="@(_answerManager.GetTextAnswer(question.Id) == option)"
+                                                                   @onchange="@(() => _answerManager.UpdateRadioAnswer(question.Id, option))" />
+                                                            <span class="radio-text">
+                                                                @if (option == "Other" && question.HasOtherOption)
+                                                                {
+                                                                    <span>Other:</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @option
+                                                                }
+                                                            </span>
+                                                        </label>
+                                                        
+                                                        @if (option == "Other" && question.HasOtherOption && _answerManager.IsOtherSelected(question.Id, "MultipleChoice"))
+                                                        {
+                                                            <input type="text"
+                                                                   class="other-input"
+                                                                   value="@_answerManager.GetCustomOtherAnswer(question.Id)"
+                                                                   @onchange="@((e) => _answerManager.UpdateCustomOtherAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                                                   placeholder="Custom option" />
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        break;
+
+                                    case "Checkboxes":
+                                        @if (question.Options?.Any() == true)
+                                        {
+                                            <div class="checkbox-group">
+                                                @foreach (var option in question.Options)
+                                                {
+                                                    <div class="checkbox-option-container">
+                                                        <label class="checkbox-option">
+                                                            <input type="checkbox" 
+                                                                   checked="@_answerManager.IsCheckboxSelected(question.Id, option)"
+                                                                   @onchange="@((e) => _answerManager.UpdateCheckboxAnswer(question.Id, option, (bool)(e.Value ?? false)))" />
+                                                            <span class="checkbox-text">
+                                                                @if (option == "Other" && question.HasOtherOption)
+                                                                {
+                                                                    <span>Other</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @option
+                                                                }
+                                                            </span>
+                                                        </label>
+                                                        
+                                                        @if (option == "Other" && question.HasOtherOption && _answerManager.IsCheckboxSelected(question.Id, option))
+                                                        {
+                                                            <input type="text"
+                                                                   class="other-input"
+                                                                   value="@_answerManager.GetCustomOtherAnswer(question.Id)"
+                                                                   @onchange="@((e) => _answerManager.UpdateCustomOtherAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
+                                                                   placeholder="Custom option" />
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        break;
+                                        
+                                    default:
+                                        <p>Unsupported question type: @question.Type</p>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="form-actions">
+                        <button type="submit" 
+                                class="btn btn-primary btn-submit" 
+                                disabled="@_state.IsSubmitting">
+                            @if (_state.IsSubmitting)
+                            {
+                                <span class="loading-text">
+                                    Submitting...
+                                </span>
+                            }
+                            else
+                            {
+                                <span>Submit Quiz</span>
+                            }
+                        </button>
+                        
+                        <button type="button" class="btn-reset" @onclick="ClearForm">Reset form</button>
+                    </div>
+                </form>
+            }
         }
     </div>
 </div>

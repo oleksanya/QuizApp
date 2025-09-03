@@ -105,11 +105,12 @@ namespace Quiz.Features.Quizzes.Services
             try
             {
                 var json = JsonSerializer.Serialize(formDto, _jsonOptions);
-                var response = await _customHttpClient.SendRequestAsync($"/forms/{id}", HttpMethod.Patch, json);
+                var response = await _customHttpClient.SendRequestAsync($"/forms/{id}", HttpMethod.Put, json);
+
                 var responseContent = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<ApiResponse<CreateFormDto>>(responseContent, _jsonOptions);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
                 return new ApiResponse<CreateFormDto>
                 {
@@ -118,28 +119,24 @@ namespace Quiz.Features.Quizzes.Services
                     Error = ex.Message
                 };
             }
+            catch (Exception ex)
+            {
+                return new ApiResponse<CreateFormDto>
+                {
+                    Success = false,
+                    Message = "Unexpected error occurred during update",
+                    Error = ex.Message
+                };
+            }
         }
+
         public async Task<ApiResponse<DeleteFormResponse>?> DeleteFormAsync(string id)
         {
             try
             {
                 var response = await _customHttpClient.SendRequestAsync($"/forms/{id}", HttpMethod.Delete);
                 var responseContent = await response.Content.ReadAsStringAsync();
-
-                if (!string.IsNullOrWhiteSpace(responseContent))
-                {
-                    return JsonSerializer.Deserialize<ApiResponse<DeleteFormResponse>>(responseContent, _jsonOptions);
-                }
-
-                return new ApiResponse<DeleteFormResponse>
-                {
-                    Success = true,
-                    Message = "Form deleted successfully",
-                    Data = new DeleteFormResponse
-                    {
-                        DeletedId = id,
-                    }
-                };
+                return JsonSerializer.Deserialize<ApiResponse<DeleteFormResponse>>(responseContent, _jsonOptions);
             }
             catch (Exception ex)
             {
@@ -147,6 +144,36 @@ namespace Quiz.Features.Quizzes.Services
                 {
                     Success = false,
                     Message = "Failed to delete form",
+                    Error = ex.Message
+                };
+            }
+        }
+
+        public async Task<ApiResponse<FormResponseSubmissionResponseDto>?> SubmitFormResponseAsync(FormResponseSubmissionDto submission)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(submission, _jsonOptions);
+                var response = await _customHttpClient.SendRequestAsync("/form-responses", HttpMethod.Post, json);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<ApiResponse<FormResponseSubmissionResponseDto>>(responseContent, _jsonOptions);
+            }
+            catch (HttpRequestException ex)
+            {
+                return new ApiResponse<FormResponseSubmissionResponseDto>
+                {
+                    Success = false,
+                    Message = "Failed to submit form response",
+                    Error = ex.Message
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<FormResponseSubmissionResponseDto>
+                {
+                    Success = false,
+                    Message = "Unexpected error occurred during submission",
                     Error = ex.Message
                 };
             }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Quiz.Features.Quizzes.Models;
+using Quiz.Features.Quizzes.Helpers;
 using Quiz.Features.Quizzes.Services;
+using Quiz.Features.Quizzes.Models;
 using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Pages.QuizPass
@@ -10,13 +11,13 @@ namespace Quiz.Features.Quizzes.Pages.QuizPass
         [Parameter] public string FormId { get; set; } = string.Empty;
         [Inject] private QuizService? QuizService { get; set; }
 
-        private bool isLoading = true;
-        private string errorMessage = string.Empty;
-        private string FormName = string.Empty;
-        private CreateFormDto? quizForm;
+        private readonly QuizFormState _state = new();
+        private readonly QuizAnswerManager _answerManager = new();
+        private QuizFormHelper? _formHelper;
 
         protected override async Task OnInitializedAsync()
         {
+            _formHelper = new QuizFormHelper(QuizService!);
             await LoadQuiz();
         }
 
@@ -30,49 +31,30 @@ namespace Quiz.Features.Quizzes.Pages.QuizPass
 
         private async Task LoadQuiz()
         {
-            try
+            var success = await _formHelper!.LoadQuizAsync(FormId, _state);
+            if (success && _state.QuizForm != null)
             {
-                isLoading = true;
-                errorMessage = string.Empty;
-                StateHasChanged();
-
-                if (string.IsNullOrEmpty(FormId))
-                {
-                    errorMessage = "Form ID is required to load the quiz.";
-                    return;
-                }
-
-                if (FormId == "temp-id")
-                {
-                    errorMessage = "This quiz hasn't been saved yet.";
-                    return;
-                }
-
-                var result = QuizService != null
-                    ? await QuizService.GetFormByIdAsync(FormId)
-                    : null;
-
-                if (result?.Success == true && result.Data != null)
-                {
-                    quizForm = result.Data;
-                    FormName = quizForm.FormInfo?.Title ?? string.Empty;
-                }
-                else
-                {
-                    errorMessage = result?.Message ?? "Failed to load quiz.";
-                    FormName = string.Empty;
-                }
+                _answerManager.InitializeAnswers(_state.QuizForm.Questions);
             }
-            catch (Exception ex)
+        }
+
+        private async Task SubmitQuiz()
+        {
+            var success = await _formHelper!.SubmitQuizAsync(FormId, _state, _answerManager);
+        }
+
+        private void ClearForm()
+        {
+            _answerManager.Clear();
+
+            if (_state.QuizForm != null)
             {
-                errorMessage = $"Failed to load quiz: {ex.Message}";
-                FormName = string.Empty;
+                _answerManager.InitializeAnswers(_state.QuizForm.Questions);
             }
-            finally
-            {
-                isLoading = false;
-                StateHasChanged();
-            }
+            
+            _state.IsSubmitted = false;
+            _state.SubmitMessage = string.Empty;
+            _state.SubmitError = false;
         }
     }
 }
