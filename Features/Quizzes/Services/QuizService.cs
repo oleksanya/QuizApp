@@ -198,5 +198,25 @@ namespace Quiz.Features.Quizzes.Services
                 };
             }
         }
+
+        public async Task<ApiResponse<TextAnswersResponseDto>?> GetQuestionTextAnswersAsync(string formId, int position, int offset, int limit)
+        {
+            try
+            {
+                var url = $"/form-responses/form/{formId}/question/{position}/text-answers?offset={offset}&limit={limit}";
+                var response = await _customHttpClient.SendRequestAsync(url, HttpMethod.Get);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<ApiResponse<TextAnswersResponseDto>>(responseContent, _jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<TextAnswersResponseDto>
+                {
+                    Success = false,
+                    Message = "Failed to retrieve question text answers",
+                    Error = ex.Message
+                };
+            }
+        }
     }
 }

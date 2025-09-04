@@ -41,4 +41,13 @@ namespace Quiz.Features.Quizzes.Models
         [JsonPropertyName("otherAnswers")] public List<string>? OtherAnswers { get; set; }
         [JsonPropertyName("hasOtherAnswers")] public bool? HasOtherAnswers { get; set; }
     }
+
+    public class TextAnswersResponseDto
+    {
+        [JsonPropertyName("answers")] public List<string> Answers { get; set; } = new();
+        [JsonPropertyName("totalAnswers")] public int TotalAnswers { get; set; }
+        [JsonPropertyName("hasMore")] public bool HasMore { get; set; }
+        [JsonPropertyName("offset")] public int Offset { get; set; }
+        [JsonPropertyName("limit")] public int Limit { get; set; }
+    }
 }
