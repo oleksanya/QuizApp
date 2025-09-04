@@ -1,0 +1,118 @@
+@using Quiz.Features.Quizzes.Models
+@using MudBlazor
+
+@if (isLoading)
+{
+    <div>Loading statistics...</div>
+}
+else if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-error">@error</div>
+}
+else if (Stats is not null)
+{
+    <div class="quiz-results-container">
+        @foreach (var q in Stats.QuestionStatistics)
+        {
+            <MudPaper Class="pa-4">
+                <div class="qr-header">@q.QuestionName</div>
+                <div class="qr-subheader">@q.TotalAnswers responses</div>
+
+                @if (q.QuestionType == "MultipleChoice")
+                {
+                    <MudGrid Justify="Justify.SpaceBetween">
+                        <MudItem xs="12" md="5">
+                            @if (HasChoiceData(q))
+                            {
+                                <MudChart Class="qr-chart"
+                                          ChartType="ChartType.Pie"
+                                          Width="300px"
+                                          Height="300px"
+                                          InputData="@ToValues(q)" />
+                            }
+                            else
+                            {
+                                <p>No data</p>
+                            }
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <div class="qr-legend">
+                                @foreach (var item in GetLegendDisplayItems(q))
+                                {
+                                    <div class="qr-legend-row">
+                                        <span class="qr-legend-dot" style="background-color:@item.Color"></span>
+                                        <span class="qr-legend-label">@item.Label</span>
+                                        <span class="qr-legend-spacer"></span>
+                                        <span class="qr-legend-value">@item.Percent% (@item.Count)</span>
+                                    </div>
+                                }
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+                }
+                else if (q.QuestionType == "Checkboxes")
+                {
+                    var bars = GetCheckboxBars(q).ToList();
+                    @if (bars.Count > 0)
+                    {
+                        <div class="qr-bars">
+                            @foreach (var b in bars)
+                            {
+                                <div class="qr-bar-row">
+                                    <span class="qr-bar-label">@b.Label</span>
+                                    <div class="qr-bar-track">
+                                        <div class="qr-bar-fill" style="width:@b.Percent%"></div>
+                                    </div>
+                                    <span class="qr-bar-value">@b.Count</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No data</p>
+                    }
+                }
+                else if (q.QuestionType == "ShortAnswer" || q.QuestionType == "Paragraph")
+                {
+                    var loadedAnswers = GetLoadedAnswers(q.Position);
+                    
+                    @if (loadedAnswers.Count > 0)
+                    {
+                        <ul class="qr-text-list">
+                            @foreach (var answer in loadedAnswers)
+                            {
+                                <li>@answer</li>
+                            }
+                        </ul>
+                    }
+
+                    @if (HasMoreAnswers(q.Position))
+                    {
+                        <button class="btn-load-answers" 
+                                disabled="@IsLoadingAnswers(q.Position)"
+                                @onclick="@(() => LoadAnswersAsync(q.Position))">
+                            @if (IsLoadingAnswers(q.Position))
+                            {
+                                <span>Loading...</span>
+                            }
+                            else
+                            {
+                                <span>Load 5 more answers</span>
+                            }
+                        </button>
+                    }
+
+                    @if (loadedAnswers.Count == 0 && !HasMoreAnswers(q.Position))
+                    {
+                        <p>No answers available</p>
+                    }
+                }
+                else
+                {
+                    <p>Unsupported type: @q.QuestionType</p>
+                }
+            </MudPaper>
+        }
+    </div>
+}
