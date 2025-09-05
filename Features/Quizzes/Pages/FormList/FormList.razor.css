@@ -16,16 +16,21 @@
 
 .form-card-list-container li {
     min-height: 14rem;
+    border: 1px solid var(--white-color);
 }
 
-.link-add-form {
-    height: 9rem;
-    width: 12rem;
-    background: var(--white-color);
-    display: block;
-    border-radius: 0.4rem;
-    border: 1px solid var(--light-grey-color)
+.form-card-list-container li:hover {
+    border: 1px solid var(--dark-purple-color);
 }
+
+    .link-add-form {
+        height: 9rem;
+        width: 12rem;
+        background: var(--white-color);
+        display: block;
+        border-radius: 0.4rem;
+        border: 1px solid var(--light-grey-color)
+    }
 
 .link-add-form img {
     height: 100%;

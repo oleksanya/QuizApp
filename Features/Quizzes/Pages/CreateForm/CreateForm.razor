@@ -1,42 +1,57 @@
 ﻿@page "/create-form"
+@page "/edit-form/{FormId}"
 @using Quiz.Features.Quizzes.Components
 
 <div class="page-container">
-    <div class="form-container">
+    <MudTabs Class="mb-4" Centered="true">
+        <MudTabPanel Text="All questions">
+            <div class="form-container">
 
-        @if (!string.IsNullOrEmpty(message))
-        {
-            <div class="alert @(isError ? "alert-error" : "alert-success")">
-                @message
-            </div>
-        }
-
-        <div class="form-header" tabindex="0">
-            <input type="text" @bind="form.Title" class="input-text form-title-input" required />
-
-            <input type="text" @bind="form.Description" placeholder="Form description" class="input-text form-description-input" required />
-        </div>
-
-        <div class="form-questions" id="questions-list">
-            @foreach (var q in form.Questions)
-            {
-                <div class="draggable-question" data-id="@q.Id">
-                    <div class="drag-handle" title="Drag to reorder">
-                        <span class="dots">⋮⋮</span>
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <div class="alert @(isError ? "alert-error" : "alert-success")">
+                        @message
                     </div>
-                    <div class="question-wrapper">
-                        <QuestionEdit Question="q" OnRemove="() => RemoveQuestion(q)" />
-                    </div>
+                }
+
+                <div class="form-header" tabindex="0">
+                    <input type="text" @bind="form.Title" class="input-text form-title-input" required />
+
+                    <input type="text" @bind="form.Description" placeholder="Form description" class="input-text form-description-input" required />
                 </div>
+
+                <div class="form-questions" id="questions-list">
+                    @foreach (var q in form.Questions)
+                    {
+                        <div class="draggable-question" data-id="@q.Id">
+                            <div class="drag-handle" title="Drag to reorder">
+                                <span class="dots">⋮⋮</span>
+                            </div>
+                            <div class="question-wrapper">
+                                <QuestionEdit Question="q" OnRemove="() => RemoveQuestion(q)" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="form-buttons-panel">
+                    <button class="btn-panel" @onclick="AddQuestion" disabled="@isLoading">+</button>
+
+                    <button class="btn-save" @onclick="SaveOrUpdate" disabled="@isLoading">
+                        <span>@(isLoading ? (IsEditMode ? "Updating..." : "Saving...") : (IsEditMode ? "Update form" : "Save form"))</span>
+                    </button>
+                </div>
+            </div>
+        </MudTabPanel>
+        <MudTabPanel Text="Quiz results">
+            @if (IsEditMode && !string.IsNullOrWhiteSpace(FormId))
+            {
+                <QuizResults FormId="@FormId" />
             }
-        </div>
-
-        <div class="form-buttons-panel">
-            <button class="btn-panel" @onclick="AddQuestion" disabled="@isLoading">+</button>
-
-            <button class="btn-save" @onclick="SaveForm" disabled="@isLoading">
-                <span>@(isLoading ? "Saving..." : "Save form")</span>
-            </button>
-        </div>
-    </div>
+            else
+            {
+                <div class="alert">Save the form first to see results.</div>
+            }
+        </MudTabPanel>
+    </MudTabs>
 </div>

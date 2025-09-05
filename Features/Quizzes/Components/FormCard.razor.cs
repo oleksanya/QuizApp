@@ -12,15 +12,8 @@ namespace Quiz.Features.Quizzes.Components
 
         private bool showContextMenu = false;
 
-        private void ToggleContextMenu()
-        {
-            showContextMenu = !showContextMenu;
-        }
-
-        private void CloseContextMenu()
-        {
-            showContextMenu = false;
-        }
+        private void ToggleContextMenu() => showContextMenu = !showContextMenu;
+        private void CloseContextMenu() => showContextMenu = false;
 
         private async Task CopyQuizLinkToClipboard()
         {
@@ -29,17 +22,23 @@ namespace Quiz.Features.Quizzes.Components
                 var baseUrl = Navigation.BaseUri.TrimEnd('/');
                 var formId = Form.Id ?? "temp-id";
                 var quizLink = $"{baseUrl}/quiz-pass/{formId}";
-                
-                if (string.IsNullOrEmpty(quizLink))
-                {
-                    return;
-                }
 
-                await JS.InvokeVoidAsync("copyToClipboard", quizLink);
+                if (!string.IsNullOrEmpty(quizLink))
+                {
+                    await JS.InvokeVoidAsync("copyToClipboard", quizLink);
+                }
             }
             finally
             {
                 CloseContextMenu();
+            }
+        }
+
+        private void OpenForEdit()
+        {
+            if (!string.IsNullOrWhiteSpace(Form.Id))
+            {
+                Navigation.NavigateTo($"/edit-form/{Form.Id}");
             }
         }
     }
