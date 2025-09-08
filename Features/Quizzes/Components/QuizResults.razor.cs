@@ -32,7 +32,7 @@ namespace Quiz.Features.Quizzes.Components
             {
                 var result = await QuizService.GetFormStatisticsAsync(FormId);
 
-                if (result?.Success == true && result.Data is not null)
+                if (result.Success && result.Data is not null)
                 {
                     Stats = result.Data;
 
@@ -48,7 +48,7 @@ namespace Quiz.Features.Quizzes.Components
                 }
                 else
                 {
-                    error = result?.Message ?? "Failed to load statistics";
+                    error = result.Message ?? "Failed to load statistics";
                 }
             }
             catch (Exception ex)
@@ -118,7 +118,7 @@ namespace Quiz.Features.Quizzes.Components
                 var currentAnswers = GetLoadedAnswers(position);
                 var result = await QuizService.GetQuestionTextAnswersAsync(FormId, position, currentAnswers.Count, 5);
                 
-                if (result?.Success == true && result.Data != null)
+                if (result.Success && result.Data != null)
                 {
                     if (!_loadedAnswers.ContainsKey(position))
                     {

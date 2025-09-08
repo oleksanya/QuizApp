@@ -63,14 +63,14 @@ namespace Quiz.Features.Quizzes.Helpers
 
                 var result = await _quizService.GetFormByIdAsync(formId);
 
-                if (result?.Success == true && result.Data != null)
+                if (result.Success && result.Data != null)
                 {
                     state.SetLoadingSuccess(result.Data);
                     return true;
                 }
                 else
                 {
-                    state.SetLoadingError(result?.Message ?? "Failed to load quiz.");
+                    state.SetLoadingError(result.Message ?? "Failed to load quiz.");
                     return false;
                 }
             }
@@ -112,14 +112,14 @@ namespace Quiz.Features.Quizzes.Helpers
 
                 var result = await _quizService.SubmitFormResponseAsync(submission);
 
-                if (result?.Success == true)
+                if (result.Success)
                 {
                     state.SetSubmissionResult(true, "Quiz submitted successfully!");
                     return true;
                 }
                 else
                 {
-                    state.SetSubmissionResult(false, result?.Message ?? "Failed to submit quiz. Please try again.");
+                    state.SetSubmissionResult(false, result.Message ?? "Failed to submit quiz. Please try again.");
                     return false;
                 }
             }

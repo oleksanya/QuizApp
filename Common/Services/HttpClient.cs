@@ -1,5 +1,7 @@
-﻿using System.Net.Http.Headers;
+﻿using Quiz.Common.Models;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 
 namespace Quiz.Common.Services
 {
@@ -33,6 +35,37 @@ namespace Quiz.Common.Services
             }
 
             return response;
+        }
+
+        public async Task<ApiResponse<T>> SendApiRequestAsync<T>(string url, HttpMethod method, string? json = null, JsonSerializerOptions? jsonOptions = null)
+        {
+            try
+            {
+                var response = await SendRequestAsync(url, method, json);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                var result = JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, jsonOptions);
+                return result ?? ApiResponse<T>.CreateError("Failed to deserialize response");
+            }
+            catch (HttpRequestException ex)
+            {
+                var operationType = method.Method switch
+                {
+                    "POST" => "create",
+                    "PUT" or "PATCH" => "update", 
+                    "DELETE" => "delete",
+                    _ => "retrieve"
+                };
+                return ApiResponse<T>.CreateError($"Failed to {operationType} resource", ex.Message);
+            }
+            catch (JsonException ex)
+            {
+                return ApiResponse<T>.CreateError("Failed to deserialize response", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<T>.CreateError("Unexpected error occurred", ex.Message);
+            }
         }
     }
 }

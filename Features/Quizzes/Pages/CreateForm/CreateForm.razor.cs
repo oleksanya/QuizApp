@@ -66,13 +66,13 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
             try
             {
                 var result = await QuizService.GetFormByIdAsync(id);
-                if (result?.Success == true && result.Data != null)
+                if (result.Success && result.Data != null)
                 {
                     MapDtoToFormModel(result.Data);
                 }
                 else
                 {
-                    message = result?.Message ?? "Failed to load form for editing.";
+                    message = result.Message ?? "Failed to load form for editing.";
                     isError = true;
                 }
             }
@@ -206,14 +206,14 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
                     ? await QuizService.UpdateFormAsync(FormId!, dto)
                     : await QuizService.SaveFormAsync(dto);
 
-                if (result?.Success == true)
+                if (result.Success)
                 {
                     message = IsEditMode ? "Form updated successfully!" : "Form saved successfully!";
                     isError = false;
                 }
                 else
                 {
-                    message = result?.Error ?? result?.Message ?? (IsEditMode ? "Failed to update form" : "Failed to save form");
+                    message = result.Error ?? result.Message ?? (IsEditMode ? "Failed to update form" : "Failed to save form");
                     isError = true;
                 }
             }
