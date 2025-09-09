@@ -92,25 +92,6 @@
     transition: background-color 0.2s, transform 0.2s;
 }
 
-.alert {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 0.4rem;
-    font-size: 0.9rem;
-}
-
-.alert-success {
-    background-color: var(--alert-success-bg);
-    color: var(--alert-success-color);
-    border: 1px solid var(--alert-success-border);
-}
-
-.alert-error {
-    background-color: var(--alert-error-bg);
-    color: var(--alert-error-color);
-    border: 1px solid var(--alert-error-border);
-}
-
 .drag-handle {
     cursor: grab;
     user-select: none;

@@ -239,24 +239,3 @@
     align-items: center;
     gap: 0.5rem;
 }
-
-.alert {
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border-radius: 0.4rem;
-    font-weight: 500;
-}
-
-.alert-success {
-    color: var(--dark-purple-color);
-}
-
-.alert-error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-}
-
-.success-container {
-    text-align: center;
-}

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Quiz.Features.Quizzes.Helpers;
 using Quiz.Features.Quizzes.Services;
-using Quiz.Features.Quizzes.Models;
-using static Quiz.Features.Quizzes.Models.QuizApiModels;
+using Quiz.Common.Services;
 
 namespace Quiz.Features.Quizzes.Pages.QuizPass
 {
@@ -10,6 +9,7 @@ namespace Quiz.Features.Quizzes.Pages.QuizPass
     {
         [Parameter] public string FormId { get; set; } = string.Empty;
         [Inject] private QuizService? QuizService { get; set; }
+        [Inject] private ToastService ToastService { get; set; } = default!;
 
         private readonly QuizFormState _state = new();
         private readonly QuizAnswerManager _answerManager = new();
@@ -17,7 +17,7 @@ namespace Quiz.Features.Quizzes.Pages.QuizPass
 
         protected override async Task OnInitializedAsync()
         {
-            _formHelper = new QuizFormHelper(QuizService!);
+            _formHelper = new QuizFormHelper(QuizService!, ToastService);
             await LoadQuiz();
         }
 

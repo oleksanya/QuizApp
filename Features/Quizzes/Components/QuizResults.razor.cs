@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Quiz.Features.Quizzes.Models;
 using Quiz.Features.Quizzes.Services;
+using Quiz.Common.Services;
 
 namespace Quiz.Features.Quizzes.Components
 {
@@ -9,9 +10,9 @@ namespace Quiz.Features.Quizzes.Components
     {
         [Parameter] public string? FormId { get; set; }
         [Inject] private QuizService QuizService { get; set; } = default!;
+        [Inject] private ToastService ToastService { get; set; } = default!;
 
         private bool isLoading;
-        private string error = string.Empty;
         private FormStatisticsDto? Stats;
 
         private readonly Dictionary<int, List<string>> _loadedAnswers = new();
@@ -22,12 +23,11 @@ namespace Quiz.Features.Quizzes.Components
         {
             if (string.IsNullOrWhiteSpace(FormId))
             {
-                error = "Form id is missing";
+                ToastService.ShowError("Form ID is missing", "Load Error");
                 return;
             }
 
             isLoading = true;
-            error = string.Empty;
             try
             {
                 var result = await QuizService.GetFormStatisticsAsync(FormId);
@@ -48,12 +48,13 @@ namespace Quiz.Features.Quizzes.Components
                 }
                 else
                 {
-                    error = result.Message ?? "Failed to load statistics";
+
+                    ToastService.ShowError("Failed to load statistics", "Load Error");
                 }
             }
             catch (Exception ex)
             {
-                error = ex.Message;
+                ToastService.ShowError($"Failed to load quiz statistics: {ex.Message}", "Load Error");
             }
             finally
             {
@@ -128,8 +129,15 @@ namespace Quiz.Features.Quizzes.Components
                     _loadedAnswers[position].AddRange(result.Data.Answers);
                     _hasMoreAnswers[position] = result.Data.HasMore;
                 }
+                else
+                {
+                    ToastService.ShowError("Failed to load additional answers", "Load Error");
+                }
             }
-
+            catch (Exception ex)
+            {
+                ToastService.ShowError($"Failed to load answers: {ex.Message}", "Load Error");
+            }
             finally
             {
                 _isLoadingAnswers[position] = false;
