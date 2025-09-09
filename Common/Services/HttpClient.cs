@@ -8,10 +8,12 @@ namespace Quiz.Common.Services
     public class CustomHttpClient
     {
         private readonly HttpClient _httpClient;
+        private readonly ToastService _toastService;
 
-        public CustomHttpClient(HttpClient httpClient)
+        public CustomHttpClient(HttpClient httpClient, ToastService toastService)
         {
             _httpClient = httpClient;
+            _toastService = toastService;
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
@@ -31,7 +33,17 @@ namespace Quiz.Common.Services
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Request failed with status code {response.StatusCode}: {errorContent}");
+                var errorMessage = $"Request failed with status code {response.StatusCode}: {errorContent}";
+                
+                var operationType = method.Method switch
+                {
+                    "POST" => "create",
+                    "PUT" or "PATCH" => "update", 
+                    "DELETE" => "delete",
+                    _ => "retrieve"
+                };
+                
+                _toastService.ShowError($"Failed to {operationType} resource", "HTTP Error");
             }
 
             return response;
@@ -56,14 +68,17 @@ namespace Quiz.Common.Services
                     "DELETE" => "delete",
                     _ => "retrieve"
                 };
+
                 return ApiResponse<T>.CreateError($"Failed to {operationType} resource", ex.Message);
             }
             catch (JsonException ex)
             {
+                _toastService.ShowError("Failed to process server response", "Parsing Error");
                 return ApiResponse<T>.CreateError("Failed to deserialize response", ex.Message);
             }
             catch (Exception ex)
             {
+                _toastService.ShowError("An unexpected error occurred", "System Error");
                 return ApiResponse<T>.CreateError("Unexpected error occurred", ex.Message);
             }
         }
