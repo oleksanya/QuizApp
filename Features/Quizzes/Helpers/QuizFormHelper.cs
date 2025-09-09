@@ -1,5 +1,5 @@
-using Quiz.Features.Quizzes.Models;
 using Quiz.Features.Quizzes.Services;
+using Quiz.Common.Services;
 using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Helpers
@@ -42,10 +42,12 @@ namespace Quiz.Features.Quizzes.Helpers
     public class QuizFormHelper
     {
         private readonly QuizService _quizService;
+        private readonly ToastService _toastService;
 
-        public QuizFormHelper(QuizService quizService)
+        public QuizFormHelper(QuizService quizService, ToastService toastService)
         {
             _quizService = quizService;
+            _toastService = toastService;
         }
 
         public async Task<bool> LoadQuizAsync(string formId, QuizFormState state)
@@ -57,7 +59,6 @@ namespace Quiz.Features.Quizzes.Helpers
 
                 if (string.IsNullOrEmpty(formId))
                 {
-                    state.SetLoadingError("Form ID is required to load the quiz.");
                     return false;
                 }
 
@@ -70,13 +71,17 @@ namespace Quiz.Features.Quizzes.Helpers
                 }
                 else
                 {
-                    state.SetLoadingError(result.Message ?? "Failed to load quiz.");
+                    var errorMessage = result.Message ?? "Failed to load quiz. Please try again.";
+                    state.SetLoadingError(errorMessage);
+                    _toastService.ShowError(errorMessage, "Load Error");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                state.SetLoadingError($"Failed to load quiz: {ex.Message}");
+                var errorMessage = $"Failed to load quiz: {ex.Message}";
+                state.SetLoadingError(errorMessage);
+                _toastService.ShowError(errorMessage, "Load Error");
                 return false;
             }
         }
@@ -91,14 +96,19 @@ namespace Quiz.Features.Quizzes.Helpers
 
                 if (state.QuizForm == null)
                 {
-                    state.SetSubmissionResult(false, "Quiz form is not loaded.");
+                    var errorMessage = "Quiz form is not loaded.";
+                    state.SetSubmissionResult(false, errorMessage);
+                    _toastService.ShowError(errorMessage, "Submit Error");
                     return false;
                 }
 
                 var validationErrors = QuizValidationHelper.ValidateAnswers(state.QuizForm, answerManager);
                 if (validationErrors.Any())
                 {
-                    state.SetSubmissionResult(false, $"Please complete all required questions: {string.Join(", ", validationErrors)}");
+                    var errorMessage = $"Please complete all required questions: {string.Join(", ", validationErrors)}";
+                    _toastService.ShowError(errorMessage, "Submit Error");
+                    state.SetSubmissionResult(false, errorMessage);
+                    
                     return false;
                 }
 
@@ -114,18 +124,24 @@ namespace Quiz.Features.Quizzes.Helpers
 
                 if (result.Success)
                 {
-                    state.SetSubmissionResult(true, "Quiz submitted successfully!");
+                    var successMessage = "Quiz submitted successfully!";
+                    state.SetSubmissionResult(true, successMessage);
+                    _toastService.ShowSuccess(successMessage);
                     return true;
                 }
                 else
                 {
-                    state.SetSubmissionResult(false, result.Message ?? "Failed to submit quiz. Please try again.");
+                    var errorMessage = result.Message ?? "Failed to submit quiz. Please try again.";
+                    state.SetSubmissionResult(false, errorMessage);
+                    _toastService.ShowError(errorMessage, "Submit Error");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                state.SetSubmissionResult(false, $"An error occurred: {ex.Message}");
+                var errorMessage = $"An error occurred: {ex.Message}";
+                state.SetSubmissionResult(false, errorMessage);
+                _toastService.ShowError(errorMessage, "Submit Error");
                 return false;
             }
         }
