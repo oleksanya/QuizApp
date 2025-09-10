@@ -35,13 +35,7 @@ namespace Quiz.Common.Services
                 var errorContent = await response.Content.ReadAsStringAsync();
                 var errorMessage = $"Request failed with status code {response.StatusCode}: {errorContent}";
                 
-                var operationType = method.Method switch
-                {
-                    "POST" => "create",
-                    "PUT" or "PATCH" => "update", 
-                    "DELETE" => "delete",
-                    _ => "retrieve"
-                };
+                var operationType = GetOperationTypeFromMethod(method);
                 
                 _toastService.ShowError($"Failed to {operationType} resource", "HTTP Error");
             }
@@ -61,13 +55,7 @@ namespace Quiz.Common.Services
             }
             catch (HttpRequestException ex)
             {
-                var operationType = method.Method switch
-                {
-                    "POST" => "create",
-                    "PUT" or "PATCH" => "update", 
-                    "DELETE" => "delete",
-                    _ => "retrieve"
-                };
+                var operationType = GetOperationTypeFromMethod(method);
 
                 return ApiResponse<T>.CreateError($"Failed to {operationType} resource", ex.Message);
             }
@@ -81,6 +69,17 @@ namespace Quiz.Common.Services
                 _toastService.ShowError("An unexpected error occurred", "System Error");
                 return ApiResponse<T>.CreateError("Unexpected error occurred", ex.Message);
             }
+        }
+
+        private static string GetOperationTypeFromMethod(HttpMethod method)
+        {
+            return method.Method switch
+            {
+                "POST" => "create",
+                "PUT" or "PATCH" => "update",
+                "DELETE" => "delete",
+                _ => "retrieve"
+            };
         }
     }
 }
