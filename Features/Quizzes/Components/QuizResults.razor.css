@@ -61,7 +61,7 @@
 
 .qr-bar-track {
     flex: 1;
-    background: var(--grey2-color);
+    background: var(--color-surface-alt);
     height: 0.8rem;
     border-radius: 0.4rem;
     overflow: hidden;
@@ -69,7 +69,7 @@
 
 .qr-bar-fill {
     height: 100%;
-    background: var(--dark-purple-color);
+    background: var(--primary-dark);
 }
 
 .qr-bar-value {
@@ -88,8 +88,8 @@
 }
 
 .btn-load-answers {
-    background: var(--dark-purple-color);
-    color: var(--white-color);
+    background: var(--primary-dark);
+    color: var(--color-basic);
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 0.4rem;
@@ -98,5 +98,5 @@
 }
 
 .btn-load-answers:hover:not(:disabled) {
-    background: var(--purple-color);
+    background: var(--primary);
 }
