@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using Quiz.Features.Quizzes.Helpers;
 using Quiz.Features.Quizzes.Services;
+using Quiz.Common.Services;
 using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Pages.CreateForm
@@ -10,13 +11,13 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
     {
         [Parameter] public string? FormId { get; set; }
         [Inject] private QuizService QuizService { get; set; } = default!;
+        [Inject] private ToastService _toastService { get; set; } = default!;
         [Inject] private IJSRuntime JS { get; set; } = default!;
 
         private DotNetObjectReference<CreateForm>? _dotNetRef;
         protected FormModel form = new();
         protected bool isLoading = false;
         protected string message = string.Empty;
-        protected bool isError = false;
 
         private bool IsEditMode => !string.IsNullOrWhiteSpace(FormId);
 
@@ -60,26 +61,24 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
         private async Task LoadFormForEdit(string id)
         {
             isLoading = true;
-            message = string.Empty;
-            isError = false;
 
             try
             {
                 var result = await QuizService.GetFormByIdAsync(id);
-                if (result?.Success == true && result.Data != null)
+                if (result.Success && result.Data != null)
                 {
                     MapDtoToFormModel(result.Data);
                 }
                 else
                 {
-                    message = result?.Message ?? "Failed to load form for editing.";
-                    isError = true;
+                    message = "Failed to load form for editing.";
+                    _toastService.ShowError(message, "Load Error");
                 }
             }
             catch (Exception ex)
             {
                 message = $"Failed to load form: {ex.Message}";
-                isError = true;
+                _toastService.ShowError(message, "Load Error");
             }
             finally
             {
@@ -194,7 +193,6 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
         {
             isLoading = true;
             message = string.Empty;
-            isError = false;
 
             try
             {
@@ -206,21 +204,21 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
                     ? await QuizService.UpdateFormAsync(FormId!, dto)
                     : await QuizService.SaveFormAsync(dto);
 
-                if (result?.Success == true)
+                if (result.Success)
                 {
                     message = IsEditMode ? "Form updated successfully!" : "Form saved successfully!";
-                    isError = false;
+                    _toastService.ShowSuccess(message);
                 }
                 else
                 {
-                    message = result?.Error ?? result?.Message ?? (IsEditMode ? "Failed to update form" : "Failed to save form");
-                    isError = true;
+                    message = result.Error ?? result.Message ?? (IsEditMode ? "Failed to update form" : "Failed to save form");
+                    _toastService.ShowError(message, "Save Error");
                 }
             }
             catch (Exception ex)
             {
                 message = $"Unexpected error: {ex.Message}";
-                isError = true;
+                _toastService.ShowError(message, "Unexpected Error");
             }
             finally
             {
@@ -246,6 +244,14 @@ namespace Quiz.Features.Quizzes.Pages.CreateForm
             catch
             {
                 RecalculatePositions();
+            }
+        }
+
+        private void OnQuizResultsTabClick()
+        {
+            if (!IsEditMode || string.IsNullOrWhiteSpace(FormId))
+            {
+                _toastService.ShowWarning("Save the form first to see results.", "Form Not Saved");
             }
         }
     }

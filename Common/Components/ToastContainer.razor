@@ -1,0 +1,6 @@
+<div class="toast-container">
+    @foreach (var toast in _toasts)
+    {
+        <Toast ToastModel="toast" OnRemove="RemoveToast" />
+    }
+</div>

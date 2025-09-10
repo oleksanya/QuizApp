@@ -6,14 +6,6 @@
     <MudTabs Class="mb-4" Centered="true">
         <MudTabPanel Text="All questions">
             <div class="form-container">
-
-                @if (!string.IsNullOrEmpty(message))
-                {
-                    <div class="alert @(isError ? "alert-error" : "alert-success")">
-                        @message
-                    </div>
-                }
-
                 <div class="form-header" tabindex="0">
                     <input type="text" @bind="form.Title" class="input-text form-title-input" required />
 
@@ -43,14 +35,10 @@
                 </div>
             </div>
         </MudTabPanel>
-        <MudTabPanel Text="Quiz results">
+        <MudTabPanel Text="Quiz results" @onclick="OnQuizResultsTabClick">
             @if (IsEditMode && !string.IsNullOrWhiteSpace(FormId))
             {
                 <QuizResults FormId="@FormId" />
-            }
-            else
-            {
-                <div class="alert">Save the form first to see results.</div>
             }
         </MudTabPanel>
     </MudTabs>

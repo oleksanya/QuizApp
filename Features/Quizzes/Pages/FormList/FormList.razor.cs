@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Quiz.Features.Quizzes.Services;
+using Quiz.Common.Services;
 using static Quiz.Features.Quizzes.Models.QuizApiModels;
 
 namespace Quiz.Features.Quizzes.Pages.FormList
@@ -7,10 +8,10 @@ namespace Quiz.Features.Quizzes.Pages.FormList
     public partial class FormList
     {
         [Inject] private QuizService QuizService { get; set; } = default!;
+        [Inject] private ToastService ToastService { get; set; } = default!;
 
         private List<CreateFormDto>? forms;
         private bool isLoading = true;
-        private string? errorMessage;
 
         protected override async Task OnInitializedAsync()
         {
@@ -22,7 +23,6 @@ namespace Quiz.Features.Quizzes.Pages.FormList
             try
             {
                 isLoading = true;
-                errorMessage = null;
 
                 var result = await QuizService.GetFormsAsync();
 
@@ -32,12 +32,13 @@ namespace Quiz.Features.Quizzes.Pages.FormList
                 }
                 else
                 {
-                    errorMessage = result?.Message ?? "Failed to load forms";
+                    var errorMsg = result?.Message ?? "Failed to load forms";
+                    ToastService.ShowError(errorMsg, "Load Error");
                 }
             }
             catch (Exception ex)
             {
-                errorMessage = $"Error loading forms: {ex.Message}";
+                ToastService.ShowError($"Error loading forms: {ex.Message}", "Unexpected Error");
             }
             finally
             {

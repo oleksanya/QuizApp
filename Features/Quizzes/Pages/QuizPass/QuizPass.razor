@@ -12,26 +12,10 @@
         }
         else if (!string.IsNullOrEmpty(_state.ErrorMessage))
         {
-            <div class="error-container">
-                <div class="alert alert-error">
-                    <h3>Error</h3>
-                    <p>@_state.ErrorMessage</p>
-                </div>
-                <button class="btn btn-primary" @onclick="LoadQuiz">Try Again</button>
-            </div>
+             <button class="btn btn-primary" @onclick="LoadQuiz">Try to load Quiz again</button>
         }
         else if (_state.QuizForm != null)
         {
-            @if (_state.IsSubmitted)
-            {
-                <div class="success-container">
-                    <div class="alert alert-success">
-                        <p>Your quiz response has been successfully submitted.</p>
-                    </div>
-                </div>
-            }
-            else
-            {
                 <div class="quiz-header">
                     <h1>@_state.QuizForm.FormInfo?.Title</h1>
                     @if (!string.IsNullOrEmpty(_state.QuizForm.FormInfo?.Description))
@@ -49,13 +33,6 @@
                         }
                     </div>
                 </div>
-
-                @if (!string.IsNullOrEmpty(_state.SubmitMessage))
-                {
-                    <div class="alert @(_state.SubmitError ? "alert-error" : "alert-success")">
-                        @_state.SubmitMessage
-                    </div>
-                }
 
                 <form class="quiz-form" @onsubmit="SubmitQuiz" @onsubmit:preventDefault="true">
                     @foreach (var question in _state.QuizForm.Questions.OrderBy(q => q.Position))
@@ -195,7 +172,6 @@
                         <button type="button" class="btn-reset" @onclick="ClearForm">Reset form</button>
                     </div>
                 </form>
-            }
         }
     </div>
 </div>

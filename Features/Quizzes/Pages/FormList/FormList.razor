@@ -13,10 +13,6 @@
     {
         <div class="loading">Loading forms...</div>
     }
-    else if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="error">@errorMessage</div>
-    }
     else
     {
         <ul class="form-card-list-container">
@@ -31,7 +27,7 @@
             }
             else
             {
-                <li>No forms available</li>
+                <li class="not-available-forms">No forms available</li>
             }
         </ul>
     }

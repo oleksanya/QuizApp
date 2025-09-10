@@ -23,14 +23,14 @@
     border: 1px solid var(--dark-purple-color);
 }
 
-    .link-add-form {
-        height: 9rem;
-        width: 12rem;
-        background: var(--white-color);
-        display: block;
-        border-radius: 0.4rem;
-        border: 1px solid var(--light-grey-color)
-    }
+.link-add-form {
+    height: 9rem;
+    width: 12rem;
+    background: var(--white-color);
+    display: block;
+    border-radius: 0.4rem;
+    border: 1px solid var(--light-grey-color)
+}
 
 .link-add-form img {
     height: 100%;
@@ -40,4 +40,12 @@
 
 .link-add-form:hover {
     border: 1px solid var(--purple-color)
+}
+
+.form-card-list-container .not-available-forms {
+    border: none;
+}
+
+.form-card-list-container .not-available-forms:hover {
+    border: none;
 }
