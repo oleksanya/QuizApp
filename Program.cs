@@ -14,5 +14,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<CustomHttpClient>();
 builder.Services.AddScoped<QuizService>();
+builder.Services.AddScoped<ThemeService>();
 
 await builder.Build().RunAsync();

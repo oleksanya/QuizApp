@@ -8,6 +8,13 @@
 <div class="main-layout">
     <header>
         <h2>Form Builder</h2>
+
+        <label class="switch">
+            <input type="checkbox" 
+                   checked="@_isDarkTheme" 
+                   @onchange="OnThemeToggle">
+            <span class="slider round"></span>
+        </label>
     </header>
 
     <div class="main-content">

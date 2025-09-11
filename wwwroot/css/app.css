@@ -1,27 +1,9 @@
+@import './lightTheme.css';
+@import './darkTheme.css';
+
 @font-face {
     font-family: 'Roboto';
     src: url('../fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
-}
-
-:root {
-    --light-grey-color: #dadce0;
-    --grey-color: #f8f9fa;
-    --grey2-color: #f1f3f4;
-    --grey3-color: #80868b;
-    --purple-color: #7323c4;
-    --white-color: #ffffff;
-    --transperent-purple: #541dc647;
-    --light-purple-color: #f0ebf8;
-    --light-purple2-color: #7249bc;
-    --dark-purple-color: #673ab7;
-    --blue-color: #84acef;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-    --black: #000000;
-
-    --info-color: #856404;
-    --danger-color: #fc0303;
-    --warning-color: #f59e0b;
-    --success-color: #10b981;
 }
 
 body {
