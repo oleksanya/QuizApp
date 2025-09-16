@@ -1,5 +1,8 @@
 @using Quiz.Common.Models
+@using Microsoft.Extensions.Logging
 @inject Quiz.Common.Interfaces.IErrorLoggerService ErrorLoggerInjected
+@inject Quiz.Common.Services.ToastService Toast
+@inject ILogger<ErrorLoggerProxy> Logger
 
 @code {
     [Parameter] public Exception Exception { get; set; } = default!;
@@ -29,7 +32,10 @@
 
             await (ErrorLogger ?? ErrorLoggerInjected).LogAsync(log);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Toast?.ShowError($"Failed to report error: {ex.Message}", "Logger Error");
+        }
     }
 
     private static string? TryExtractComponentFromStackTrace(Exception ex)
