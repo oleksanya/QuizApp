@@ -41,10 +41,7 @@ namespace Quiz.Common.Services
                 {
                     response = await _client.SendRequestAsync(LogEndpoint, HttpMethod.Post, json);
                 }
-                finally
-                {
-                    response?.Dispose();
-                }
+                catch (Exception) { }
             }
             catch (Exception) { }
         }
