@@ -4,6 +4,7 @@ using MudBlazor.Services;
 using Quiz;
 using Quiz.Common.Services;
 using Quiz.Features.Quizzes.Services;
+using Quiz.Common.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -12,8 +13,9 @@ builder.Services.AddMudServices();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:3002") });
 builder.Services.AddScoped<ToastService>();
+builder.Services.AddScoped<ThemeService>();
 builder.Services.AddScoped<CustomHttpClient>();
 builder.Services.AddScoped<QuizService>();
-builder.Services.AddScoped<ThemeService>();
+builder.Services.AddScoped<IErrorLoggerService, ErrorLoggerService>();
 
 await builder.Build().RunAsync();
