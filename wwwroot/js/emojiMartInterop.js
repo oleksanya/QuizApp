@@ -44,13 +44,38 @@
         pickerContainer.appendChild(picker);
         pickerContainer.style.display = "none";
 
-        button.addEventListener("click", () => {
+        const hidePicker = () => {
+            if (pickerVisible) {
+                pickerVisible = false;
+                pickerContainer.style.display = "none";
+            }
+        };
+
+        const togglePicker = () => {
             pickerVisible = !pickerVisible;
             pickerContainer.style.display = pickerVisible ? "block" : "none";
 
             if (pickerVisible) {
                 input.focus();
             }
+        };
+
+        button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            togglePicker();
+        });
+
+        // Click outside handler
+        document.addEventListener("click", (event) => {
+            if (pickerVisible &&
+                !pickerContainer.contains(event.target) &&
+                !button.contains(event.target)) {
+                hidePicker();
+            }
+        });
+
+        pickerContainer.addEventListener("click", (event) => {
+            event.stopPropagation();
         });
     }
 };
