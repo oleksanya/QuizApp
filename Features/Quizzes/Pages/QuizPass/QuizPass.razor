@@ -54,19 +54,25 @@
                                 @switch (question.Type)
                                 {
                                     case "ShortAnswer":
-                                        <input type="text" 
+                                        <input type="text"
+                                               id="answer-@question.Id"
                                                class="form-input"
                                                value="@_answerManager.GetTextAnswer(question.Id)" 
                                                @onchange="@((e) => _answerManager.UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
-                                               placeholder="Your answer..." />
+                                           placeholder="Your answer..." />
+
+                                    <EmojiPicker InputSelector="@($"#answer-{question.Id}")" />
                                         break;
 
                                     case "Paragraph":
-                                        <textarea class="form-textarea"
+                                    <textarea id="answer-@question.Id"
+                                                  class="form-textarea"
                                                   rows="4"
                                                   value="@_answerManager.GetTextAnswer(question.Id)"
                                                   @onchange="@((e) => _answerManager.UpdateTextAnswer(question.Id, e.Value?.ToString() ?? string.Empty))"
                                                   placeholder="Your detailed answer..."></textarea>
+
+                                    <EmojiPicker InputSelector="@($"#answer-{question.Id}")" />
                                         break;
 
                                     case "MultipleChoice":
