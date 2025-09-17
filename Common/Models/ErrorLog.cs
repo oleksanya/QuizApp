@@ -9,17 +9,16 @@ namespace Quiz.Common.Models
         public string? Component { get; init; }
         public string? UserAgent { get; init; }
 
-        public static ErrorLog FromException(Exception ex, string? path = null, string? component = null, object? additional = null, string? userAgent = null)
+        public ErrorLog() {  }
+
+        public ErrorLog(Exception ex, string? path = null, string? component = null, string? userAgent = null)
         {
-            return new ErrorLog
-            {
-                Message = ex.Message,
-                StackTrace = ex.ToString(),
-                Source = ex.Source,
-                Path = path,
-                Component = component,
-                UserAgent = userAgent,
-            };
+            Message = ex.Message;
+            StackTrace = ex.ToString();
+            Source = ex.Source;
+            Path = path;
+            Component = component;
+            UserAgent = userAgent;
         }
     }
 }

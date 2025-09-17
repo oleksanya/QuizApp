@@ -1,18 +1,15 @@
+@inherits ErrorBoundary
 @using Microsoft.AspNetCore.Components.Web
-@inject Quiz.Common.Interfaces.IErrorLoggerService ErrorLogger
-@inject IJSRuntime JS
-@inject NavigationManager Navigation
 
-<ErrorBoundary @ref="_boundary">
-    <ChildContent>
-        @ChildContent
-    </ChildContent>
-    <ErrorContent Context="ex">
-        <ErrorLoggerProxy Exception="ex" ErrorLogger="ErrorLogger" JS="JS" Navigation="Navigation" />
-        <div class="error-fallback">
-            <h3>Something went wrong!</h3>
-            <p>We have encountered an unexpected error.</p>
-            <button class="btn-retry" @onclick="Recover">Reload page</button>
-        </div>
-    </ErrorContent>
-</ErrorBoundary>
+@if (CurrentException is null)
+{
+    @ChildContent
+}
+else
+{
+    <div class="error-fallback">
+        <h3>Something went wrong!</h3>
+        <p>We have encountered an unexpected error.</p>
+        <button class="btn-retry" @onclick="Recover">Reload page</button>
+    </div>
+}
