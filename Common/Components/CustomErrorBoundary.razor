@@ -1,0 +1,15 @@
+@inherits ErrorBoundary
+@using Microsoft.AspNetCore.Components.Web
+
+@if (CurrentException is null)
+{
+    @ChildContent
+}
+else
+{
+    <div class="error-fallback">
+        <h3>Something went wrong!</h3>
+        <p>We have encountered an unexpected error.</p>
+        <button class="btn-retry" @onclick="Recover">Reload page</button>
+    </div>
+}
