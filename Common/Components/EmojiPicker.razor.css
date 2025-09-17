@@ -1,0 +1,11 @@
+﻿.emoji-picker-wrapper {
+    position: absolute;
+    top: 1rem;
+    right: 0.7rem;
+}
+
+.emoji-popup {
+    position: absolute;
+    right: 0;
+    z-index: 1000;
+}
