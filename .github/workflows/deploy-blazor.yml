@@ -20,9 +20,6 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -41,6 +38,12 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o release --no-build
 
+      - name: Change base-tag in index.html from / to QuizApp
+        run: sed -i 's/<base href="\/" \/>/<base href="\/QuizApp\/" \/>/g' release/wwwroot/index.html
+
+      - name: Add .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
         if: github.ref == 'refs/heads/development'
@@ -49,7 +52,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/development'
         with:
-            path: ./release/wwwroot
+          path: ./release/wwwroot
 
       - name: Deploy to GitHub Pages
         id: deployment
