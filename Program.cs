@@ -7,7 +7,7 @@ using Quiz.Features.Quizzes.Services;
 using Quiz.Common.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<App>("#app", options => options.UseHashRouting = true);
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
 
