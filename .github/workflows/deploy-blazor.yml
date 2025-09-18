@@ -41,9 +41,17 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o release --no-build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
         if: github.ref == 'refs/heads/development'
-        with: 
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./release/wwwroot
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/development'
+        with:
+            path: ./release/wwwroot
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        if: github.ref == 'refs/heads/development'
