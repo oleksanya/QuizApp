@@ -38,7 +38,7 @@ namespace Quiz.Features.Quizzes.Components
         {
             if (!string.IsNullOrWhiteSpace(Form.Id))
             {
-                Navigation.NavigateTo($"/edit-form/{Form.Id}");
+                Navigation.NavigateTo($"/QuizApp/edit-form/{Form.Id}");
             }
         }
     }
